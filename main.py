@@ -22,7 +22,7 @@ import time
 import csv
 import operator
 
-CHUNK_SIZE = 30
+CHUNK_SIZE_IN_TICKS = 30
 OUT_FIELD_NAMES = []
 SEARCH_PATH = "./*.fast5"
 
@@ -50,26 +50,19 @@ def display_percent(chunk_size, chunk_percent, last_percent, progress):
 def colease(n):
     return 1 if n == 0 else n
 
-
-def process_file(file):
-
-def reduce_results(file_details, main_details):
-
 def process_chunk(files, start_time):
 
     event_details = {}
 
     for f in files:
         with h5py.File(f[0], 'r') as hdf:
-            
-            Events = findEvents(hdf)
-            file_details = process_file(Events)
+            file_details = process_file(findEvents(hdf))
 
     event_details = reduce_results(file_details, event_details)
 
     return event_details
 
-def get_file_chunks(sorted_dict, chunk_size_in_sec):
+def get_file_chunks(sorted_dict, chunk_size_in_ticks):
     start_chunk = 0
     end_chunk = 0
     chunked_files = []
@@ -78,7 +71,7 @@ def get_file_chunks(sorted_dict, chunk_size_in_sec):
     search_time = int(time1)
 
     while start_chunk < total_events - 1:
-        search_time += chunk_size_in_sec
+        search_time += chunk_size_in_ticks
 
         if sorted_dict[start_chunk][1] > search_time:
             continue
@@ -90,12 +83,12 @@ def get_file_chunks(sorted_dict, chunk_size_in_sec):
 
         curr_chunk = sorted_dict[start_chunk:(end_chunk + 1)]
 
-        chunked_files.append([curr_chunk, search_time - chunk_size_in_sec])
+        chunked_files.append([curr_chunk, search_time - chunk_size_in_ticks])
 
         start_chunk = end_chunk + 1
 
     if start_chunk == total_events - 1:
-        chunked_files.append([[sorted_dict[start_chunk]], search_time - chunk_size_in_sec])
+        chunked_files.append([[sorted_dict[start_chunk]], search_time - chunk_size_in_ticks])
 
     return chunked_files
 
@@ -119,8 +112,8 @@ def main():
 
     sorted_start_times = sorted(start_times.items(), key=operator.itemgetter(1))
     print("Finished")
-    print("Splitting up files into corrosponding chunks of {} seconds".format(CHUNK_SIZE))
-    chunks = get_file_chunks(sorted_start_times, CHUNK_SIZE)
+    print("Splitting up files into corrosponding chunks of {} seconds".format(CHUNK_SIZE_IN_TICKS))
+    chunks = get_file_chunks(sorted_start_times, CHUNK_SIZE_IN_TICKS)
 
     print("Found {} chunks.".format(len(chunks)))
 
@@ -143,10 +136,26 @@ def main():
                 print('processed')
         print("Finished processing chunks.")
 
+# To be filled in by the end user
+
+# Given a HDF5 file, this should return the events to be analyzed
 def findEvents(fast5):
     return None
 
+# Given a HDF5 event structure, return the time of the event indexed
+# by idx.
 def findTime(events, idx):
+    return None
+
+# Given a HDF5 event structure, process the events and produce a 
+# dictionary of data information.
+def process_file(events):
+    return None
+
+# Given the data from process_file and the main details to be returned,
+# aggregate the information between them. Note that the details returned
+# should have the same files as OUT_FIELD_NAMES.
+def reduce_results(file_details, main_details):
     return None
 
 main()
