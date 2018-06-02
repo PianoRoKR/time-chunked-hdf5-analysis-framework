@@ -29,8 +29,10 @@ reduce_results(file_details,main_details)
 See comments in the code for their particular usages.
 
 `OUT_FIELD_NAMES` determines the names of the output fields for the CSV.
+
 `SEARCH_PATH` determines where to find the HDF5 files. By default, it searches
 the directory `main.py` is launched from.
+
 `CHUNK_SIZE_IN_TICKS` determines the size in ticks that the framework should
 use to chunk the HDF5 files. This should be a unit related to the time returned
 by the `findTime` function.
