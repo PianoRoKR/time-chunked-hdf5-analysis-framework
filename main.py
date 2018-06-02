@@ -16,9 +16,8 @@
 results over a series of time chunks """
 
 from glob import glob
-import numpy as np
 import h5py
-import math 
+import math
 import time
 import csv
 import operator
@@ -122,7 +121,7 @@ def main():
     print("Finished")
     print("Splitting up files into corrosponding chunks of {} seconds".format(CHUNK_SIZE))
     chunks = get_file_chunks(sorted_start_times, CHUNK_SIZE)
-    
+
     print("Found {} chunks.".format(len(chunks)))
 
     total_events = 0
@@ -146,7 +145,7 @@ def main():
 
 def findEvents(fast5):
     return None
-           
+
 def findTime(events, idx):
     return None
 
